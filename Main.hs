@@ -1,6 +1,6 @@
 module Main where
 
-import Graphics.Declarative.Bordered as Bordered
+import Graphics.Declarative.Bordered as Bordered hiding (map)
 
 import Graphics.Declarative.Cairo.Form as Form
 import Graphics.Declarative.Cairo.Shape as Shape
@@ -12,7 +12,15 @@ import Graphics.Declarative.Gtk.Debug as GtkDebug
 
 import Data.Vec2 as Vec2
 
-main = debugTangentProgram $ padded 10 form
---main = showFormWindow (0.5, 0.5) $ debugTangent Vec2.right form
+main :: IO ()
+main = debugTangentProgram $ 
+  debugTangentHull (Vec2.degrees 3) $
+  --debugTangents (Vec2.degrees 30) $
+  noDebug $
+    form
 
-form = outlined (solid blue) $ rectangle 40 40
+debugTangents :: DebuggedForm -> DebuggedForm
+debugTangents = foldr1 (.) . map debugTangent . vectorsInCircle
+
+form :: Form
+form = move (200,100) $ outlined (solid blue) $ rectangle 40 40
